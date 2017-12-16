@@ -63,7 +63,7 @@ function map.draw()
 			-- there is no image to be placed
 			-- in that specific position
 			if tipo ~= "X" then
-        	--love.graphics.print(tostring(tipo), (j-1)*s, (i-1)*s)
+        --love.graphics.print(tostring(tipo), (j-1)*s, (i-1)*s)
 				love.graphics.draw(map.grid.pattern[tipo], (j-1)*s, (i-1)*s, 0, boxScale, boxScale)
 			end
 		end
