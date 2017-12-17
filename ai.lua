@@ -3,6 +3,7 @@ local ai = {
     grid = {},
     goal = {},
   }
+local path = {}
   
 local function distance(x, y)
   return math.abs(x - y)
@@ -21,7 +22,8 @@ local function cost(i, j)
   if ai.grid[i][j] ~= "X" then
     return 100
   else
-    return distance(ai.position.i, i) + distance(ai.position.j, j) + distance(i, ai.goal.i) + distance(j, ai.goal.j)
+    --return distance(ai.position.i, i) + distance(ai.position.j, j) + distance(i, ai.goal.i) + distance(j, ai.goal.j)
+    return distance(i, ai.goal.i) + distance(j, ai.goal.j)
   end
 end
   
@@ -49,18 +51,23 @@ end
   an item is in a table,
   otherwise false
 ]]
-function inTable(tbl, item)
+local function inTable(tbl, item)
   for _, value in pairs(tbl) do
     if value.i == item.i and value.j == item.j then return true end
   end
   return false
 end
 
+local function clearTable(tbl)
+  for i=#tbl, 0 do
+    table.remove(tbl,i)
+  end
+end
+
 --[[
   Function to return the best path towards the goal
 ]]
 function ai.bestPath()
-  local path = {}
   local current = {
     i = ai.position.i,
     j = ai.position.j
@@ -70,14 +77,14 @@ function ai.bestPath()
 
   table.insert(path, {i = current.i, j = current.j})
   
-  while current.i ~= ai.goal.i and current.j ~= ai.goal.j do
+  while current.i ~= ai.goal.i or current.j ~= ai.goal.j do
     local neighbors = getNeighbors(current.i, current.j)
     best = 100
     best_index = -1
     for index,neighbor in ipairs(neighbors) do
       if not inTable(path, neighbor) then
         neighbor_cost = cost(neighbor.i, neighbor.j)
-        if neighbor_cost <= best then
+        if neighbor_cost < best then
           best = neighbor_cost
           best_index = index
         end
@@ -109,6 +116,14 @@ end
 function ai.setStartLocation(i, j)
   ai.position.i = i
   ai.position.j = j
+end
+
+function ai.setObstacle(i, j)
+  ai.grid[i][j] = "B"
+end
+
+function ai.clearPath()
+  clearTable(path)
 end
 
 return ai
