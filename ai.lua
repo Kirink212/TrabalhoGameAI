@@ -52,8 +52,8 @@ end
   otherwise false
 ]]
 local function inTable(tbl, item)
-  for _, value in pairs(tbl) do
-    if value.i == item.i and value.j == item.j then return true end
+  for key, value in pairs(tbl) do
+    if value.i == item.i and value.j == item.j then return key end
   end
   return false
 end
@@ -113,7 +113,7 @@ function ai.setGoal(i, j)
   ai.goal.j = j
 end
 
-function ai.setStartLocation(i, j)
+function ai.setLocation(i, j)
   ai.position.i = i
   ai.position.j = j
 end
@@ -124,6 +124,11 @@ end
 
 function ai.clearPath()
   clearTable(path)
+end
+
+function ai.nextStep()
+  local step = next(path, inTable(path, ai.position))
+  return path[step]
 end
 
 return ai
