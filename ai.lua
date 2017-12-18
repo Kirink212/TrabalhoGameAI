@@ -4,7 +4,12 @@ local ai = {
     goal = {},
   }
 local path = {}
-  
+
+--local file = io.open("path.txt", "w")
+
+--[[
+  Returns distance between x and y
+]]
 local function distance(x, y)
   return math.abs(x - y)
 end
@@ -14,32 +19,33 @@ end
   to node [i, j] if node
   [i, j] is a box, cost is 100
   else, cost is distance from
-  start to node [i, j] +
-  distance from node [i, j] to goal
-  (A* search)
+  node [i, j] to goal
 ]]--
 local function cost(i, j)
   if ai.grid[i][j] ~= "X" then
     return 100
   else
-    --return distance(ai.position.i, i) + distance(ai.position.j, j) + distance(i, ai.goal.i) + distance(j, ai.goal.j)
     return distance(i, ai.goal.i) + distance(j, ai.goal.j)
   end
 end
-  
-local function getNeighbors(i, j)
+
+--[[
+  Function returns valid 
+  neighbors of node [i, j]
+]]
+function getNeighbors(i, j)
   local neighbors = {}
   
-  if i + 1 <= ai.grid.total_lines then
+  if i + 1 <= ai.grid.total_lines and ai.grid[i+1][j] == "X" then
     table.insert(neighbors, {i = i+1, j = j})
   end
-  if i - 1 > 0 then
+  if i - 1 > 0  and ai.grid[i-1][j] == "X" then
     table.insert(neighbors, {i = i-1, j = j})
   end
-  if j + 1 <= ai.grid.total_cols then
+  if j + 1 <= ai.grid.total_cols  and ai.grid[i][j+1] == "X" then
     table.insert(neighbors, {i = i, j = j+1})
   end
-  if j - 1 > 0 then
+  if j - 1 > 0  and ai.grid[i][j-1] == "X" then
     table.insert(neighbors, {i = i, j = j-1})
   end
   
@@ -47,7 +53,7 @@ local function getNeighbors(i, j)
 end
 
 --[[
-  Function returns true if
+  Function returns index if
   an item is in a table,
   otherwise false
 ]]
@@ -58,14 +64,35 @@ local function inTable(tbl, item)
   return false
 end
 
-local function clearTable(tbl)
-  for i=#tbl, 0 do
-    table.remove(tbl,i)
+--[[
+  Function returns if a node
+  [i, j] can reach the goal
+  without going back the path
+]]
+local function reachesGoal(i, j, current_path)
+  if i == ai.goal.i and j == ai.goal.j then
+    --file:write("chegou ao destino\n")
+    return true
   end
+  local neighbors = getNeighbors(i, j)
+  table.insert(current_path, {i = i, j = j})
+  --file:write("testa i=" .. i .. "\tj= " .. j .. "\n")
+  for _,neighbor in ipairs(neighbors) do
+    if not inTable(current_path, neighbor) and reachesGoal(neighbor.i, neighbor.j, current_path) then
+      table.remove(current_path, #current_path)
+      return true
+    end
+  end
+  --file:write("remove i=" .. i .. "\tj= " .. j .. "\n")
+  table.remove(current_path, #current_path)
+  return false
 end
 
 --[[
-  Function to return the best path towards the goal
+  Function to return the best
+  path towards the goal using
+  the cost function
+  (Greedy search)
 ]]
 function ai.bestPath()
   local current = {
@@ -82,21 +109,32 @@ function ai.bestPath()
     best = 100
     best_index = -1
     for index,neighbor in ipairs(neighbors) do
-      if not inTable(path, neighbor) then
+      if reachesGoal(neighbor.i, neighbor.j, path) then
         neighbor_cost = cost(neighbor.i, neighbor.j)
+        --file:write("neighbor_cost: " .. neighbor_cost .. "\tneighbor index: " .. index .. "\n")
         if neighbor_cost < best then
           best = neighbor_cost
           best_index = index
         end
       end
     end
+    --file:write("best_index: " .. best_index .. "\n")
+    for z,k in ipairs(path) do
+      --file:write("path " .. z .. " i: " .. k.i .. " j: " .. k.j .. "\n")
+    end
     table.insert(path, neighbors[best_index])
     current.i = neighbors[best_index].i
     current.j = neighbors[best_index].j
   end
+  
   return path
 end
 
+--[[
+  Set the map size for the
+  AI to know which nodes are
+  valid
+]]
 function ai.setMapSize(x, y)
   ai.grid.total_lines = x
   ai.grid.total_cols = y
@@ -108,24 +146,49 @@ function ai.setMapSize(x, y)
   end
 end
 
+--[[
+  Set the AI goal for the
+  bestPath search
+]]
 function ai.setGoal(i, j)
   ai.goal.i = i
   ai.goal.j = j
 end
 
+--[[
+  Set the AI current location.
+  Should always be used to
+  update AI location
+]]
 function ai.setLocation(i, j)
   ai.position.i = i
   ai.position.j = j
 end
 
+--[[
+  Adds a box on the target
+  node [i, j]
+]]
 function ai.setObstacle(i, j)
   ai.grid[i][j] = "B"
 end
 
+--[[
+  Clears path table.
+  Should be used when
+  current path is wrong
+  and needs to be recalculated
+]]
 function ai.clearPath()
-  clearTable(path)
+  for i=#path, 0 do
+    table.remove(path,i)
+  end
 end
 
+--[[
+  Returns the next step
+  on the AI path
+]]
 function ai.nextStep()
   local step = next(path, inTable(path, ai.position))
   return path[step]
