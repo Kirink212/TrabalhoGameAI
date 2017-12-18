@@ -33,7 +33,9 @@ function animation.create(img, num_lines, num_columns, fps, total_time, begin_li
 		-- animation timer
 		timer = 0,
 		-- current animation frame
-		current_frame = 1
+		current_frame = 1,
+		-- spritesheet tile size
+		tileSize = tile_size
 	}
 
 	return new_animation
