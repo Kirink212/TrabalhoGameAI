@@ -2,32 +2,12 @@ local ai = {
     position = {},
     grid = {},
     goal = {},
+    previous = {},
   }
+  
 local path = {}
 
 --local file = io.open("path.txt", "w")
-
---[[
-  Returns distance between x and y
-]]
-local function distance(x, y)
-  return math.abs(x - y)
-end
-  
---[[
-  Function to calculate cost
-  to node [i, j] if node
-  [i, j] is a box, cost is 100
-  else, cost is distance from
-  node [i, j] to goal
-]]--
-local function cost(i, j)
-  if ai.grid[i][j] ~= "X" then
-    return 100
-  else
-    return distance(i, ai.goal.i) + distance(j, ai.goal.j)
-  end
-end
 
 --[[
   Function returns valid 
@@ -53,32 +33,24 @@ function getNeighbors(i, j)
 end
 
 --[[
-  Function returns index if
-  an item is in a table,
-  otherwise false
-]]
-local function inTable(tbl, item)
-  for key, value in pairs(tbl) do
-    if value.i == item.i and value.j == item.j then return key end
-  end
-  return false
-end
-
---[[
   Function to return the best
   path towards the goal using
   the cost function
   (Greedy search)
 ]]
-function ai.nextStep()
+function ai.nextStep(map)
   local current = {
     i = ai.position.i,
     j = ai.position.j
   }
   
+  if current.i == ai.goal.i and current.j == ai.goal.j then
+    return "stop"
+  end
+  
   local n = getNeighbors(current.i, current.j)
   local new_n = {}
-  for i=1, #n do
+  --[[for i=1, #n do
     local neighbor = n[i] 
     if ai.grid[neighbor.i][neighbor.j] == "J" then
       table.insert(new_n, neighbor)
@@ -87,16 +59,39 @@ function ai.nextStep()
 
   for i=1, #n do
     local neighbor = n[i] 
-    if ai.grid[neighbor.i][neighbor.j] == "X" then
+    if ai.grid[neighbor.i][neighbor.j] == "X" and (neighbor.i ~= ai.previous.i or neighbor.j ~= ai.previous.j) then
       table.insert(new_n, neighbor)
     end
   end
-
-  for i=1, #new_n do
-    print(ai.grid[new_n[i].i][new_n[i].j])
+  
+  for i=1, #n do
+    local neighbor = n[i]
+    if neighbor.i == ai.previous.i or neighbor.j == ai.previous.j then
+      table.insert(new_n, neighbor)
+    end
+  end]]
+  
+  while #n > 0 do
+    local lowest = 1
+    for i=1, #n do
+      if ai.grid[n[i].i][n[i].j] < ai.grid[n[lowest].i][n[lowest].j] then
+        lowest = i
+      end
+    end
+    table.insert(new_n, n[lowest])
+    table.remove(n, lowest)
   end
 
-  if new_n[1].i > ai.position.i then
+  print(#new_n)
+  for i=1, #new_n do
+    print(ai.grid[new_n[i].i][new_n[i].j] .. " " .. new_n[i].i .. " " .. new_n[i].j)
+  end
+
+  print("next i= " .. new_n[1].i .. " j= " .. new_n[1].j .. "")
+  if map.grid[new_n[1].i][new_n[1].j] == "B" then
+    ai.setObstacle(new_n[1].i, new_n[1].j)
+    return "stop"
+  elseif new_n[1].i > ai.position.i then
     return "down"
   elseif new_n[1].i < ai.position.i then
     return "up"
@@ -118,7 +113,7 @@ function ai.setMapSize(x, y)
   for i=1, x do
     ai.grid[i] = {}
     for j=1, y do
-      ai.grid[i][j] = "J"
+      ai.grid[i][j] = 0
     end
   end
 end
@@ -138,8 +133,12 @@ end
   update AI location
 ]]
 function ai.setLocation(i, j)
+  ai.previous.i = ai.position.i
+  ai.previous.j = ai.position.j
   ai.position.i = i
   ai.position.j = j
+  ai.grid[i][j] = ai.grid[i][j] + 1
+  --ai.grid[i][j] = "X"
 end
 
 --[[
