@@ -46,8 +46,8 @@ function player.load()
 	player.curr_state = player.states.walk_right
 
 	ts = player.curr_state.values.tileSize
-	player.x = player.map_col*ts
-	player.y = player.map_line*ts
+	player.x = (map.start[2]-1)*ts + 1
+	player.y = (map.start[1]-1)*ts + 1
 end
 
 function player.canMove(key, coord)
@@ -89,7 +89,7 @@ function player.update(dt)
 		for j=1, map.grid.total_cols do
 			local map_x = (j-1)*ts
 			local map_y = (i-1)*ts
-			if map.grid[i][j] ~= "X" then
+			if map.grid[i][j] == "B" then
 				if collision.checkBoxes(player.x - ts/2, player.y, ts/2, ts/2, map_x, map_y, ts, ts) then
 					print("Colidiu")
 					player.x = player_previous_x

@@ -47,11 +47,11 @@ function player2.load()
 	player2.curr_state = player2.states.walk_right
 
 	ts = player2.curr_state.values.tileSize
-	player2.x = player2.map_col*ts + 1
-	player2.y = player2.map_line*ts
+	player2.x = (map.start[2]-1)*ts + 1
+	player2.y = (map.start[1]-1)*ts + 1
   
-  ai.setLocation(player2.map_line+1, player2.map_col+1)
-  ai.setGoal(1, 23)
+  ai.setLocation(map.start[1], map.start[2])
+  ai.setGoal(map.finish[1], map.finish[2])
   --ai.bestPath()
 end
 
@@ -88,6 +88,8 @@ function player2.update(dt)
         		player2[coord] = player2[coord] + p.velocity*p.dir[key]*dt
         		player2.curr_state = player2.states[ka]
         		anim.run_frames(dt, player2.curr_state)
+      elseif key == "stop" then
+        player2.curr_state.values.current_frame = 1
 			end
 		end
 	end

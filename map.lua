@@ -31,6 +31,11 @@ local function loadMapGrid(filename)
 			-- Use substring to get exacly what
 			-- you're reading
 			map.grid[i][j] = line:sub(j,j)
+      if map.grid[i][j] == "S" then
+        map.start = {i, j}
+      elseif map.grid[i][j] == "F" then
+        map.finish = {i, j}
+      end
     	end
     	i = i + 1
   	end
@@ -66,7 +71,7 @@ function map.draw()
 			-- X in the TXT archive means
 			-- there is no image to be placed
 			-- in that specific position
-			if tipo ~= "X" then
+			if tipo == "B" then
         --love.graphics.print(tostring(tipo), (j-1)*s, (i-1)*s)
 				love.graphics.draw(map.grid.pattern[tipo], (j-1)*s, (i-1)*s, 0, boxScale, boxScale)
 			end
