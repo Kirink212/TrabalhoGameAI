@@ -180,8 +180,8 @@ end
   and needs to be recalculated
 ]]
 function ai.clearPath()
-  for i=#path, 0 do
-    table.remove(path,i)
+  for i in pairs(path) do
+    path[i] = nil
   end
 end
 
@@ -190,8 +190,19 @@ end
   on the AI path
 ]]
 function ai.nextStep()
-  local step = next(path, inTable(path, ai.position))
-  return path[step]
+  local index = inTable(path, ai.position) + 1
+  if index > #path then
+    return "stop"
+  end
+  if path[index].i > ai.position.i then
+    return "down"
+  elseif path[index].i < ai.position.i then
+    return "up"
+  elseif path[index].j > ai.position.j then
+    return "right"
+  elseif path[index].j < ai.position.j then
+    return "left"
+  end
 end
 
 return ai

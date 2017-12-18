@@ -1,3 +1,5 @@
+local ai = require "ai"
+
 local map = {
 	tileSize = 32,
 	width = 800,
@@ -51,6 +53,8 @@ function map.load()
 
 	-- Calling function loadMapGrid
 	loadMapGrid("mapa_teste.txt")
+  
+  ai.setMapSize(map.grid.total_lines, map.grid.total_cols)
 end
 
 function map.draw()
