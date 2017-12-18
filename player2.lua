@@ -147,10 +147,10 @@ function player2.draw()
 	-- 	end
 	-- end
   love.graphics.setColor(255,255,255)
-  love.graphics.print("map_line: " .. player2.map_line+1 .. "\tmap_col: " .. player2.map_col+1 .. "", 0, 0)
+  --[[love.graphics.print("map_line: " .. player2.map_line+1 .. "\tmap_col: " .. player2.map_col+1 .. "", 0, 0)
   for i,v in ipairs(path) do
     love.graphics.print("i: " .. v.i .. "\tj: " .. v.j .. "", 0, 15*i)
-  end
+  end]]
 end
 
 function player2.keyreleased(key)
