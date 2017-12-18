@@ -52,7 +52,7 @@ function player2.load()
   
   ai.setLocation(player2.map_line+1, player2.map_col+1)
   ai.setGoal(1, 23)
-  path = ai.bestPath()
+  --ai.bestPath()
 end
 
 function player2.canMove(key, coord)
@@ -81,13 +81,13 @@ function player2.update(dt)
 		local p = player2
 		for k = 1, #keys do
 			--local key = keys[k]
-      local key = ai.nextStep()
+      		local key = ai.nextStep()
 			if keys[k] == key then
-        print(key)
+        		print(key)
 				local ka = keys_animations[key]
-        player2[coord] = player2[coord] + p.velocity*p.dir[key]*dt
-        player2.curr_state = player2.states[ka]
-        anim.run_frames(dt, player2.curr_state)
+        		player2[coord] = player2[coord] + p.velocity*p.dir[key]*dt
+        		player2.curr_state = player2.states[ka]
+        		anim.run_frames(dt, player2.curr_state)
 			end
 		end
 	end
@@ -98,15 +98,15 @@ function player2.update(dt)
 			local map_y = (i-1)*ts
 			if map.grid[i][j] ~= "X" then
 				if collision.checkBoxes(player2.x - ts/2, player2.y, ts/2, ts/2, map_x, map_y, ts, ts) then
-					print("Colidiu")
-          ai.setObstacle(i, j)
-          print("Adicionado obstaculo em [" .. i .. ", " .. j .. "]")
-          ai.clearPath()
-          path = ai.bestPath()
+					--print("Colidiu")
+					ai.setObstacle(i, j)
+					--print("Adicionado obstaculo em [" .. i .. ", " .. j .. "]")
+					--ai.clearPath()
+					--path = ai.bestPath()
 					player2.x = player2_previous_x
-          player2.y = player2_previous_y
-        end
-      end
+					player2.y = player2_previous_y
+				end
+			end
 		end
 	end
 
@@ -137,7 +137,7 @@ end
 
 function player2.draw()
 	local frame = player2.curr_state.values.current_frame
-  love.graphics.setColor(50,255,255)
+  	love.graphics.setColor(50,255,255)
   	love.graphics.draw(img, player2.curr_state.seq[frame], player2.x, player2.y, 0, 1, 1, ts/2, ts/2)
     love.graphics.rectangle("line", player2.x - ts/2, player2.y, ts/2, ts/2)
 
@@ -147,18 +147,18 @@ function player2.draw()
   	-- love.graphics.print(tostring(player.map_col))
   	-- love.graphics.print(tostring(player.map_line), 0, 50)
 
- --  	for i=1, map.grid.total_lines do
+ 	-- for i=1, map.grid.total_lines do
 	-- 	for j=1, map.grid.total_cols do
 	-- 		local map_x = (j-1)*ts
 	-- 		local map_y = (i-1)*ts
 	-- 		love.graphics.rectangle("line", map_x, map_y, ts, ts)
 	-- 	end
 	-- end
-  love.graphics.setColor(255,255,255)
-  love.graphics.print("map_line: " .. player2.map_line+1 .. "\tmap_col: " .. player2.map_col+1 .. "", 0, 0)
-  for i,v in ipairs(path) do
-    love.graphics.print("i: " .. v.i .. "\tj: " .. v.j .. "", 0, 15*i)
-  end
+	love.graphics.setColor(255,255,255)
+	love.graphics.print("map_line: " .. player2.map_line+1 .. "\tmap_col: " .. player2.map_col+1 .. "", 0, 0)
+	-- for i,v in ipairs(path) do
+	-- 	love.graphics.print("i: " .. v.i .. "\tj: " .. v.j .. "", 0, 15*i)
+	-- end
 end
 
 return player2
