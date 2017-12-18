@@ -47,7 +47,7 @@ function player2.load()
 	player2.curr_state = player2.states.walk_right
 
 	ts = player2.curr_state.values.tileSize
-	player2.x = player2.map_col*ts
+	player2.x = player2.map_col*ts + 1
 	player2.y = player2.map_line*ts
   
   ai.setLocation(player2.map_line+1, player2.map_col+1)
@@ -122,8 +122,15 @@ function player2.update(dt)
 		player2.y = map.height - ts
 	end	
 
-	player2.map_col = math.floor(player2.x/ts)
-	player2.map_line = math.floor(player2.y/ts)
+	player2.map_col = math.floor((player2.x - ts/2)/ts)
+	player2.map_line = math.floor((player2.y + ts/2)/ts)
+  
+  if player2.map_col < 0 then
+    player2.map_col = 0
+  end
+  if player2.map_line < 0 then
+    player2.map_line = 0
+  end
   
   ai.setLocation(player2.map_line+1, player2.map_col+1)
 end
@@ -132,6 +139,7 @@ function player2.draw()
 	local frame = player2.curr_state.values.current_frame
   love.graphics.setColor(50,255,255)
   	love.graphics.draw(img, player2.curr_state.seq[frame], player2.x, player2.y, 0, 1, 1, ts/2, ts/2)
+    love.graphics.rectangle("line", player2.x - ts/2, player2.y, ts/2, ts/2)
 
   	-- love.graphics.setColor(255,0,0)
   	-- love.graphics.rectangle("line", player.x - ts/2, player.y, ts/2, ts/2)
@@ -147,18 +155,10 @@ function player2.draw()
 	-- 	end
 	-- end
   love.graphics.setColor(255,255,255)
-  --[[love.graphics.print("map_line: " .. player2.map_line+1 .. "\tmap_col: " .. player2.map_col+1 .. "", 0, 0)
+  love.graphics.print("map_line: " .. player2.map_line+1 .. "\tmap_col: " .. player2.map_col+1 .. "", 0, 0)
   for i,v in ipairs(path) do
     love.graphics.print("i: " .. v.i .. "\tj: " .. v.j .. "", 0, 15*i)
-  end]]
-end
-
-function player2.keyreleased(key)
-	for i, v in pairs(player2.dir) do
-		if key == i then
-			player2.curr_state.values.current_frame = 1
-		end
-	end
+  end
 end
 
 return player2

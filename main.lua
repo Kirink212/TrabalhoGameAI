@@ -23,5 +23,4 @@ end
 
 function love.keyreleased(key)
 	player.keyreleased(key)
-  player2.keyreleased(key)
 end

@@ -112,16 +112,16 @@ function ai.bestPath()
       if reachesGoal(neighbor.i, neighbor.j, path) then
         neighbor_cost = cost(neighbor.i, neighbor.j)
         --file:write("neighbor_cost: " .. neighbor_cost .. "\tneighbor index: " .. index .. "\n")
-        if neighbor_cost < best then
+        if neighbor_cost <= best then
           best = neighbor_cost
           best_index = index
         end
       end
     end
     --file:write("best_index: " .. best_index .. "\n")
-    for z,k in ipairs(path) do
+    --for z,k in ipairs(path) do
       --file:write("path " .. z .. " i: " .. k.i .. " j: " .. k.j .. "\n")
-    end
+    --end
     table.insert(path, neighbors[best_index])
     current.i = neighbors[best_index].i
     current.j = neighbors[best_index].j
