@@ -82,12 +82,12 @@ function ai.nextStep(map)
     table.remove(n, lowest)
   end
 
-  print(#new_n)
+  --print(#new_n)
   for i=1, #new_n do
-    print(ai.grid[new_n[i].i][new_n[i].j] .. " " .. new_n[i].i .. " " .. new_n[i].j)
+    --print(ai.grid[new_n[i].i][new_n[i].j] .. " " .. new_n[i].i .. " " .. new_n[i].j)
   end
 
-  print("next i= " .. new_n[1].i .. " j= " .. new_n[1].j .. "")
+  --print("next i= " .. new_n[1].i .. " j= " .. new_n[1].j .. "")
   if map.grid[new_n[1].i][new_n[1].j] == "B" then
     ai.setObstacle(new_n[1].i, new_n[1].j)
     return "stop"

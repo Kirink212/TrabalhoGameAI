@@ -9,12 +9,14 @@ local player = {
 	map_col = 0,
 	map_line = 16,
   	x = 0,
-  	y = 0
+  	y = 0,
+  	win = false
 }
 
 local anim = require "animation"
 local map = require "map"
 local collision = require "collision"
+local ai = require "ai"
 
 local img
 local ts
@@ -91,7 +93,7 @@ function player.update(dt)
 			local map_y = (i-1)*ts
 			if map.grid[i][j] == "B" then
 				if collision.checkBoxes(player.x - ts/2, player.y, ts/2, ts/2, map_x, map_y, ts, ts) then
-					print("Colidiu")
+					--print("Colidiu")
 					player.x = player_previous_x
 			        player.y = player_previous_y
         		end
@@ -113,6 +115,10 @@ function player.update(dt)
 
 	player.map_col = math.floor(player.x/ts)
 	player.map_line = math.floor(player.y/ts)
+  
+	if map.grid[player.map_line + 1][player.map_col + 1] == "F" then
+    	player.win = true
+	end
 end
 
 function player.draw()

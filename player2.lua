@@ -5,11 +5,12 @@ local player2 = {
 		down = 1,
 		right = 1
 	},
-	velocity = 200,
+	velocity = 260,
 	map_col = 0,
 	map_line = 16,
   	x = 0,
-  	y = 0
+  	y = 0,
+  	win = false
 }
 
 local anim = require "animation"
@@ -138,6 +139,11 @@ function player2.update(dt)
   
   if player2.map_col ~= previous_col or player2.map_line ~= previous_line then
     ai.setLocation(player2.map_line+1, player2.map_col+1)
+  end
+
+  if map.grid[player2.map_line + 1][player2.map_col + 1] == "F" then
+    player2.win = true
+    --print(map.grid[player2.map_line][player2.map_col])
   end
 end
 
